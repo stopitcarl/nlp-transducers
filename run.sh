@@ -18,7 +18,8 @@ done
 # Run the tests
 for i in compiled/test_$model*.fst; do
 	echo "Testing: $i"    
-    fstcompose $i compiled/$model.fst | fstshortestpath > compiled/result_$(basename $i ".fst").fst
+    # fstcompose $i compiled/$model.fst | fstshortestpath > compiled/result_$(basename $i ".fst").fst
+    fstproject  --project_output=true  compiled/result_$(basename $i ".fst").fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
 done
 
 for i in compiled/result_test_$model*.fst; do
@@ -30,7 +31,7 @@ done
 # fstcompose compiled/numeroR.fst compiled/converter.fst | fstshortestpath | fstproject | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
 # fstcompose compiled/numeroR.fst compiled/converter.fst | fstshortestpath | fstproject --project_output=true | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
 
-# fstproject --project_output=true compiled/result_test_mm2mmm_1.fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
+# fstproject  --type=output compiled/result_test_mm2mmm_1.fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
 
 
 # fstproject result_test_mm2mmm_1.fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
