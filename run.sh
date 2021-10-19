@@ -69,13 +69,13 @@ for m in ${models[@]}; do
         # Run the tests
         for i in compiled/*$model-test.fst; do
         	echo "Testing: $i"    
-            fstcompose $i compiled/$model.fst | fstshortestpath > compiled/result_$(basename $i ".fst").fst
-            fstproject --project_output=true compiled/result_$(basename $i ".fst").fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
+            fstcompose $i compiled/$model.fst | fstshortestpath > compiled/result-$(basename $i ".fst").fst
+            fstproject --project_output=true compiled/result-$(basename $i ".fst").fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
         done
 
-        for i in compiled/result_test_$model*.fst; do
+        for i in compiled/result-*$model*.fst; do
         	# echo "Creating image: images/$(basename $i '.fst').png"
-            fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt $i | dot -Tpng > images/$(basename $i '.fst').png
+            fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt $i | dot -Tpng -Gdpi=300 > images/$(basename $i '.fst').png
         done
     fi
     printf "\n\n########################################\n"    
