@@ -1,15 +1,21 @@
 #!/bin/bash
 
-
 shopt -s nullglob  # To prevent failures if there's no tests in a dir.
 
 mkdir -p compiled images
 
-rm compiled/*;
-rm images/*;
+rm compiled/**;
+rm images/**;
 
 models=( "copy" "d2dd" "d2dddd" "date2year" "leap" "mm2mmm" "R2A" "skip" "A2R" "birthR2A" "birthA2T" "birthT2R" "birthR2L")
 to_test=( "birthR2A" "birthA2T" "birthT2R" "birthR2L" )
+
+containsElement () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
 
 # Compile tests
 for m in ${models[@]}; do	
@@ -63,15 +69,13 @@ for m in ${models[@]}; do
     # echo "Imaging model: images/$model.png"
     fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt compiled/$model.fst | dot -Tpng -Gdpi=300 > images/$model.png
 
-    # Compile tests 
-    
-    if [[ ${to_test[*]} =~ $model ]]; then
+    # Compile tests (only for certain models)
+    if containsElement ${model} "${to_test[@]}"; then        
         
         for i in tests/*$model.txt; do
         	# echo "Compiling: $i"                
             fstcompile --isymbols=syms.txt --acceptor $i | fstarcsort > compiled/$(basename $i ".txt")-test.fst
         done
-
 
         # Run the tests
         for i in compiled/*$model-test.fst; do
