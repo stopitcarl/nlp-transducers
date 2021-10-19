@@ -45,23 +45,12 @@ for m in ${models[@]}; do
         fstconcat compiled/$model.fst compiled/copy.fst compiled/$model.fst        
         fstconcat compiled/$model.fst compiled/copy.fst compiled/$model.fst        
         fstconcat compiled/$model.fst compiled/copy.fst compiled/$model.fst  
-    elif [ "$model" = "birthT2R" ]; then
-        fstinvert compiled/d2dd.fst compiled/dd2d.fst        
-        fstcompose compiled/dd2d.fst compiled/A2R.fst  compiled/dd2d2R.fst
+    elif [ "$model" = "birthT2R" ]; then           
+        fstinvert compiled/birthA2T.fst compiled/birthT2A.fst        
+        fstinvert compiled/birthR2A.fst compiled/birthA2R.fst        
+        fstcompose compiled/birthT2A.fst compiled/birthA2R.fst compiled/$model.fst
 
-        fstinvert compiled/mm2mmm.fst compiled/mmm2mm.fst
-        fstcompose compiled/mmm2mm.fst compiled/dd2d.fst compiled/mmmm2mm2d.fst
-        fstcompose compiled/mmmm2mm2d.fst compiled/A2R.fst compiled/mmmm2mm2d2R.fst
-
-        fstinvert compiled/d2dddd.fst compiled/dddd2d.fst        
-        fstcompose compiled/dddd2d.fst compiled/A2R.fst compiled/dddd2d2R.fst
-        
-        fstconcat compiled/dd2d2R.fst compiled/copy.fst compiled/$model.fst        
-        fstconcat compiled/$model.fst compiled/mmmm2mm2d2R.fst compiled/$model.fst  
-        fstconcat compiled/$model.fst compiled/copy.fst compiled/$model.fst        
-        fstconcat compiled/$model.fst compiled/dddd2d2R.fst compiled/$model.fst        
-    elif [ "$model" = "birthR2L" ]; then
-        # fstinvert compiled/birthR2A.fst compiled/$model.fst
+    elif [ "$model" = "birthR2L" ]; then        
         fstcompose compiled/birthR2A.fst compiled/date2year.fst compiled/$model.fst
         fstcompose compiled/$model.fst compiled/leap.fst compiled/$model.fst
     fi
