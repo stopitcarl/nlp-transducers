@@ -9,7 +9,7 @@ rm compiled/*;
 rm images/*;
 
 models=( "copy" "d2dd" "d2dddd" "date2year" "leap" "mm2mmm" "R2A" "skip" "A2R" "birthR2A" "birthA2T" "birthT2R" "birthR2L")
-# models=( "copy" "d2dd" "d2dddd" "R2A" "A2R" "birthR2A" "birthA2T")
+to_test=( "birthR2A" "birthA2T" "birthT2R" "birthR2L" )
 
 # Compile tests
 for m in ${models[@]}; do	
@@ -63,24 +63,28 @@ for m in ${models[@]}; do
     # echo "Imaging model: images/$model.png"
     fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt compiled/$model.fst | dot -Tpng -Gdpi=300 > images/$model.png
 
-    # Compile tests    
-    for i in tests/$model\_*.txt; do
-    	# echo "Compiling: $i"    
-        fstcompile --isymbols=syms.txt --acceptor $i | fstarcsort > compiled/test_$(basename $i ".txt").fst
-    done
+    # Compile tests 
+    
+    if [[ ${to_test[*]} =~ $model ]]; then
+        
+        for i in tests/*$model.txt; do
+        	# echo "Compiling: $i"                
+            fstcompile --isymbols=syms.txt --acceptor $i | fstarcsort > compiled/$(basename $i ".txt")-test.fst
+        done
 
 
-    # Run the tests
-    for i in compiled/test_$model*.fst; do
-    	echo "Testing: $i"    
-        fstcompose $i compiled/$model.fst | fstshortestpath > compiled/result_$(basename $i ".fst").fst
-        fstproject --project_output=true compiled/result_$(basename $i ".fst").fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
-    done
+        # Run the tests
+        for i in compiled/*$model-test.fst; do
+        	echo "Testing: $i"    
+            fstcompose $i compiled/$model.fst | fstshortestpath > compiled/result_$(basename $i ".fst").fst
+            fstproject --project_output=true compiled/result_$(basename $i ".fst").fst | fstrmepsilon | fsttopsort | fstprint --acceptor --isymbols=./syms.txt
+        done
 
-    for i in compiled/result_test_$model*.fst; do
-    	# echo "Creating image: images/$(basename $i '.fst').png"
-        fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt $i | dot -Tpng > images/$(basename $i '.fst').png
-    done
+        for i in compiled/result_test_$model*.fst; do
+        	# echo "Creating image: images/$(basename $i '.fst').png"
+            fstdraw --portrait --isymbols=syms.txt --osymbols=syms.txt $i | dot -Tpng > images/$(basename $i '.fst').png
+        done
+    fi
     printf "\n\n########################################\n"    
 done
     # echo "Testing the transducer 'converter' with the input 'tests/numeroR.txt' (stdout)"
